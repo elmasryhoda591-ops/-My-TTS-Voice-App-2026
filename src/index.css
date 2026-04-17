@@ -1,0 +1,48 @@
+@import url('https://fonts.googleapis.com/css2?family=Changa:wght@400;500;600;700&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap');
+@import "tailwindcss";
+
+:root {
+  --color-bg-deep: #0a0a0b;
+  --color-bg-panel: #141416;
+  --color-player-bg: #111113;
+  --color-accent: #c5a47e;
+  --color-text-primary: #e0e0e2;
+  --color-text-secondary: #949499;
+  --color-border: #232326;
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --color-bg-deep: #f8f9fa;
+  --color-bg-panel: #ffffff;
+  --color-player-bg: #fdfdfd;
+  --color-accent: #b08d68;
+  --color-text-primary: #1a1a1c;
+  --color-text-secondary: #6e6e73;
+  --color-border: #e2e2e5;
+  color-scheme: light;
+}
+
+:root[data-theme="sepia"] {
+  --color-bg-deep: #f4ecd8;
+  --color-bg-panel: #fdf6e3;
+  --color-player-bg: #f8f1df;
+  --color-accent: #b58900;
+  --color-text-primary: #5c4b37;
+  --color-text-secondary: #8c7a65;
+  --color-border: #e8dab2;
+  color-scheme: light;
+}
+
+@theme {
+  --color-bg-deep: var(--color-bg-deep);
+  --color-bg-panel: var(--color-bg-panel);
+  --color-player-bg: var(--color-player-bg);
+  --color-accent: var(--color-accent);
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-border: var(--color-border);
+  --font-serif: 'Amiri', Georgia, serif;
+  --font-sans: 'Changa', 'Helvetica Neue', Arial, sans-serif;
+}
+
