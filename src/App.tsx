@@ -131,27 +131,27 @@ export default function App() {
       let finalPromptText = text.substring(0, 4800);
       let promptModifiers = [];
 
-      // Add deep contextual instructions to force ultra-natural human performance vs robotic
+      // Fast, optimized contextual instructions to reduce generation latency
       if (selectedVoice.startsWith('h_')) {
-          let persona = "a professional human voice actor";
-          if (selectedVoice === 'h_boy') persona = "a young human boy (child around 8 years old) with a natural, bright, and energetic child's voice";
-          else if (selectedVoice === 'h_girl') persona = "a young human girl (child around 8 years old) with a natural, sweet, and expressive child's voice";
-          else if (selectedVoice === 'h_man') persona = "a mature adult human man";
-          else if (selectedVoice === 'h_woman') persona = "a mature adult human woman";
-          else if (selectedVoice === 'h_young_man') persona = "a young adult human man";
-          else if (selectedVoice === 'h_young_woman') persona = "a young adult human woman";
+          let persona = "human voice actor";
+          if (selectedVoice === 'h_boy') persona = "young boy (8yo)";
+          else if (selectedVoice === 'h_girl') persona = "young girl (8yo)";
+          else if (selectedVoice === 'h_man') persona = "mature man";
+          else if (selectedVoice === 'h_woman') persona = "mature woman";
+          else if (selectedVoice === 'h_young_man') persona = "young man";
+          else if (selectedVoice === 'h_young_woman') persona = "young woman";
 
-          promptModifiers.push(`act as ${persona}. CRITICAL INSTRUCTION: First, deeply analyze the text to understand its core emotion, context, and intent (e.g., anger, sadness, joy, explanation, urgency). Then, strictly adapt your vocal tone, pitch, pacing, and emotional expression to perfectly match the feeling of the text. Use natural pauses, authentic emotion, and perfect conversational prosody exactly matching a real ${persona.split(' (')[0]}`);
+          promptModifiers.push(`Act as a ${persona}. Read naturally with authentic emotion, appropriate pauses, and conversational tone`);
       } else if (selectedVoice.startsWith('a_')) {
-          promptModifiers.push(`speak strictly in a formal, structured, clear, and robotic AI assistant tone without varied human emotion`);
+          promptModifiers.push(`Speak in a formal, structured, clear AI assistant tone`);
       }
 
       if (selectedDialect !== 'auto') {
          if (selectedDialect === 'custom' && customDialect.trim() !== '') {
-            promptModifiers.push(`CRITICAL: You MUST perfectly emulate the localized pronunciation, vocabulary nuances, and exact phonetic accent of "${customDialect.trim()}" native speakers without falling back to standard dialects`);
+            promptModifiers.push(`Use exact native "${customDialect.trim()}" pronunciation and accent`);
          } else if (selectedDialect !== 'custom') {
             const dialectName = DIALECTS.find(d => d.id === selectedDialect)?.promptName;
-            if (dialectName) promptModifiers.push(`CRITICAL: You MUST perfectly emulate the localized pronunciation, vocabulary nuances, and exact phonetic accent of authentic native "${dialectName}" speakers`);
+            if (dialectName) promptModifiers.push(`Use exact native "${dialectName}" pronunciation and accent`);
          }
       }
 
@@ -163,17 +163,16 @@ export default function App() {
       if (speed >= 1.5 && speed < 2.0) promptModifiers.push(`speak briskly and at a fast pace`);
       else if (speed >= 2.0) promptModifiers.push(`speak very rapidly and urgently`);
 
-      const systemInstruction = promptModifiers.length > 0 
-          ? `Instructions for voice output: ${promptModifiers.join(' and ')}.`
-          : undefined;
+      // Note: The TTS model strictly synthesizes the text literal provided. 
+      // It does NOT support systemInstructions, nor should we prepend prompts to the text 
+      // otherwise it will literally speak the prompt instructions out loud. 
 
       const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
       const response = await ai.models.generateContent({
         model: "gemini-3.1-flash-tts-preview",
-        contents: [{ parts: [{ text: finalPromptText }] }], // Safe content limit for TTS
+        contents: [{ parts: [{ text: finalPromptText }] }], // Pure text to synthesize
         config: {
           responseModalities: [Modality.AUDIO],
-          systemInstruction: systemInstruction,
           speechConfig: {
             voiceConfig: {
               prebuiltVoiceConfig: { voiceName: actualApiVoiceId },
